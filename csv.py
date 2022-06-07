@@ -13,7 +13,7 @@ colNames = df.columns.tolist()
 df.dropna(how='all', axis=1, inplace=True)
 df.dropna(thresh=2, inplace=True)
 
-# Create output dataframe
+# Create output dataframe, coloumn names
 out_csv = pd.DataFrame()
 csvNames = ['*InvoiceNo', '*Customer', '*InvoiceDate', '*DueDate', 'Terms', 'Location', 'Memo', 'Item(Product/Service)', 'ItemDescription', 'ItemQuantity', 'ItemRate', '*ItemAmount', 'ItemTaxAmount']
 #input for invoice number, get number of rows, make list of that size iterating invoice number by one, input for date
