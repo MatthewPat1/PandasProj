@@ -8,8 +8,13 @@ fileName = input()
 wb = load_workbook(filename = fileName)
 # Get invoice sheet
 sheet = wb['Invoice']
+
 # Get the table, idk if it will always have Table_1 as the name...
-table = sheet.tables['Table_1']
+# table = sheet.tables['Table_1']
+
+# Get first table first table name
+tableName = sheet.tables.items()[0][0]
+table = sheet.tables[tableName]
 # Range of the table ex: B12:O40
 rStr = table.ref
 # Returns the numbers in a list
