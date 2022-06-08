@@ -46,6 +46,7 @@ numRows = df.shape[0]
 invoiceList = [int(invoiceNum) + i for i in range(numRows)]
 date = input()
 
+# Put values into coloumns
 out_csv['*InvoiceNo'] = invoiceList
 out_csv['*Customer'] = df['Parent (First Name, Last Name)']
 out_csv[['*InvoiceDate', '*DueDate']] = date
@@ -58,6 +59,9 @@ out_csv['ItemRate'] = df['Column1'].astype(int)
 out_csv['*ItemAmount'] = out_csv['ItemQuantity'] * out_csv['ItemRate']
 out_csv['*ItemAmount'] = out_csv['*ItemAmount'].astype(int)
 out_csv['ItemTaxAmount'] = 0
+
+# Reordering incase it is in the wrong order ... this might be redundant if I just added it in the right order (Could also create dictionary to make it easier to read)
 out_csv = out_csv[csvNames]
+# Get csv file name and output csv file to current directory
 csvFileName = fileName.split('.')[0] + '.csv'
 out_csv.to_csv(csvFileName, index=False)
