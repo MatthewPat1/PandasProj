@@ -29,7 +29,9 @@ coloumns = re.sub(r'[0-9]', '', rStr)
 
 # Before manipulating the ranges of the dataframe iterate through the coloumn names search for name of company person.
 dfcompany1 = pd.read_excel(fileName)
+# Coloumns current look like {Name you want}, Unnamed Coloumn 1, Unnamed Coloumn 2...
 UnnamedList = dfcompany1.columns
+# Looks for the coloumn name that doesn't have Unnamed in it and makes assigns compName to it. ex: Brittany R... for later use
 for name in UnnamedList:
     if 'Unnamed' not in name:
         compName = name
