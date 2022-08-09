@@ -17,8 +17,8 @@ df.dropna(thresh=2, inplace=True)
 out_csv = pd.DataFrame()
 csvNames = ['*InvoiceNo', '*Customer', '*InvoiceDate', '*DueDate', 'Terms', 'Location', 'Memo', 'Item(Product/Service)', 'ItemDescription', 'ItemQuantity', 'ItemRate', '*ItemAmount', 'ItemTaxAmount']
 #input for invoice number, get number of rows, make list of that size iterating invoice number by one, input for date
-date = input()
-invoiceNum = input()
+date = input("Please input the date: ")
+invoiceNum = input("Invoice Number: ")
 numRows = df.shape[0]
 invoiceList = [ int(invoiceNum) + i for i in range(numRows)]
 
