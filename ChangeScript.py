@@ -2,7 +2,7 @@ import pandas as pd
 import re
 from openpyxl import load_workbook
 # Brittany R Proposed May 2022.xlsx
-fileName = input()
+fileName = input("Input name of file: ")
 
 # Load entire workbook
 wb = load_workbook(filename = fileName)
@@ -43,10 +43,10 @@ df.dropna(thresh=3, inplace=True)
 
 out_csv = pd.DataFrame()
 csvNames = ['*InvoiceNo', '*Customer', '*InvoiceDate', '*DueDate', 'Terms', 'Location', 'Memo', 'Item(Product/Service)', 'ItemDescription', 'ItemQuantity', 'ItemRate', '*ItemAmount', 'ItemTaxAmount']
-invoiceNum = input()
+invoiceNum = input("input starting invoice number")
 numRows = df.shape[0]
 invoiceList = [int(invoiceNum) + i for i in range(numRows)]
-date = input()
+date = input("Input Date: ")
 
 # Put values into coloumns
 out_csv['*InvoiceNo'] = invoiceList
