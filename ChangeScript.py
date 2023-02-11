@@ -1,40 +1,69 @@
 import pandas as pd
+import re
+from openpyxl import load_workbook
+# Brittany R Proposed May 2022.xlsx
+fileName = input("Input name of file: ")
 
-dfcompany = pd.read_excel('Brittany R Proposed May 2022.xlsx', header=0, usecols='B')
-name = dfcompany.columns.tolist()
+# Load entire workbook
+wb = load_workbook(filename = fileName)
+# Get invoice sheet
+sheet = wb['Invoice']
 
-# read excel file start dataframe at row 12, make coloumns from C -> O
-df = pd.read_excel('Brittany R Proposed May 2022.xlsx', header=11, usecols='C:O')
+# Get the table, idk if it will always have Table_1 as the name...
+# table = sheet.tables['Table_1']
 
-# Get coloumn names into list
-colNames = df.columns.tolist()
+# Get first table first table name
+tableName = sheet.tables.items()[0][0]
+table = sheet.tables[tableName]
+# Range of the table ex: B12:O40
+rStr = table.ref
+# Returns the numbers in a list
+head, tail = re.findall('[0-9]+', rStr)
+head = int(head) - 1
+# Returns the letter range ex: B:O
+coloumns = re.sub(r'[0-9]', '', rStr)
 
-# Remove emopty coloumns and rows
+# Get the name at the top left corner, idk if this will change positions?
+# dfcompany = pd.read_excel(fileName, header=0, usecols='B')
+# name = dfcompany.columns.tolist()
+
+# Before manipulating the ranges of the dataframe iterate through the coloumn names search for name of company person.
+dfcompany1 = pd.read_excel(fileName)
+# Coloumns current look like {Name you want}, Unnamed Coloumn 1, Unnamed Coloumn 2...
+UnnamedList = dfcompany1.columns
+# Looks for the coloumn name that doesn't have Unnamed in it and makes assigns compName to it. ex: Company A for later use
+for name in UnnamedList:
+    if 'Unnamed' not in name:
+        compName = name
+        break
+# Create dataframe, drop horizontal and vertical rows that have nothing in them
+df = pd.read_excel(fileName, header=head, usecols=coloumns)
 df.dropna(how='all', axis=1, inplace=True)
-df.dropna(thresh=2, inplace=True)
+df.dropna(thresh=3, inplace=True)
 
-# Create output dataframe, coloumn names
 out_csv = pd.DataFrame()
 csvNames = ['*InvoiceNo', '*Customer', '*InvoiceDate', '*DueDate', 'Terms', 'Location', 'Memo', 'Item(Product/Service)', 'ItemDescription', 'ItemQuantity', 'ItemRate', '*ItemAmount', 'ItemTaxAmount']
-#input for invoice number, get number of rows, make list of that size iterating invoice number by one, input for date
-date = input("Please input the date: ")
-invoiceNum = input("Invoice Number: ")
+invoiceNum = input("input starting invoice number")
 numRows = df.shape[0]
-invoiceList = [ int(invoiceNum) + i for i in range(numRows)]
+invoiceList = [int(invoiceNum) + i for i in range(numRows)]
+date = input("Input Date: ")
 
-# Adding to dataframe
+# Put values into coloumns
 out_csv['*InvoiceNo'] = invoiceList
 out_csv['*Customer'] = df['Parent (First Name, Last Name)']
 out_csv[['*InvoiceDate', '*DueDate']] = date
 out_csv['Terms'] = 'Due on Receipt'
 out_csv[['Location', 'Memo']] = " "
 out_csv['Item(Product/Service)'] = df['Services']
-out_csv['ItemDescription'] = df['Student (First Name, Last Name)'] + ' ' + df['Services'] + ' with ' + name + ';dates of service: ' + df['Regular Session Dates'] + ' - ' + df['Length of Sessions'] + 'sessions'
-out_csv['ItemQuantity'] = df['Hours']
-out_csv['ItemRate'] = df['Column1']
+out_csv['ItemDescription'] = df['Student (First Name, Last Name)'] + ' ' + df['Services'] + ' with ' + compName + '; dates of service: ' + df['Regular Session Dates'] + ' - ' + df['Length of Sessions'] + ' sessions'
+out_csv['ItemQuantity'] = df['Hours'].astype(int)
+out_csv['ItemRate'] = df['Column1'].astype(int)
 out_csv['*ItemAmount'] = out_csv['ItemQuantity'] * out_csv['ItemRate']
+out_csv['*ItemAmount'] = out_csv['*ItemAmount'].astype(int)
 out_csv['ItemTaxAmount'] = 0
-# Rearrange to make sure they are in the correct coloumn position
+
+# Reordering incase it is in the wrong order ... this might be redundant if I just added it in the right order (Could also create dictionary to make it easier to read)
 out_csv = out_csv[csvNames]
-# Make dataframe a csv file in current directory
-out_csv.to_csv('out.csv')
+# Get csv file name and output csv file to current directory
+csvFileName = fileName.split('.')[0] + '.csv'
+out_csv.to_csv(csvFileName, index=False)
